@@ -1,0 +1,21 @@
+@model BuiTanThanh_2280602928_W3.Models.Shift
+@{
+    ViewData["Title"] = "Xóa ca làm";
+}
+<h2>Xóa ca làm</h2>
+<h4>Bạn có chắc chắn muốn xóa ca làm này không?</h4>
+<dl class="row">
+    <dt class="col-sm-3">Nhân viên</dt>
+    <dd class="col-sm-9">@Model.Staff?.Name (@Model.Staff?.Email)</dd>
+    <dt class="col-sm-3">Ngày</dt>
+    <dd class="col-sm-9">@Model.Date.ToString("dd/MM/yyyy")</dd>
+    <dt class="col-sm-3">Ca</dt>
+    <dd class="col-sm-9">
+        @(Model.ShiftType switch { ShiftType.Morning => "Sáng (7h-12h)", ShiftType.Afternoon => "Trưa (12h-17h)", ShiftType.Evening => "Tối (17h-22h)", _ => Model.ShiftType.ToString() })
+    </dd>
+</dl>
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Xóa</button>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</form>

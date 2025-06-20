@@ -1,0 +1,62 @@
+﻿@model BuiTanThanh_2280602928_W3.Models.Product
+
+@* Thêm một số classes của Bootstrap để tạo layout đẹp hơn *@
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-6">
+            @* Hiển thị ảnh sản phẩm hoặc ảnh mặc định *@
+            <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "https://dummyimage.com/450x300/dee2e6/6c757d.jpg" : Model.ImageUrl)" alt="Product Image" class="img-fluid rounded shadow-sm" />
+        </div>
+        <div class="col-md-6">
+            <h2 class="text-primary">@Model.Name</h2>
+            <h5 class="mb-2">Category: <span class="badge bg-info">@Model.Category?.Name</span></h5>
+            <h3 class="text-success">@string.Format("{0:C}", Model.Price)</h3>
+            <p class="lead">@Model.Description</p>
+            <p>Status: <span class="badge @(Model.Status == "active" ? "bg-success" : "bg-secondary")">@Model.Status</span></p>
+            <a href="@Url.Action("Index", "Product")" class="btn btn-secondary btn-lg">Back to List</a>
+        </div>
+    </div>
+</div>
+
+@* Thêm một số style tùy chỉnh *@
+<style>
+    .container {
+        max-width: 1200px;
+    }
+
+    h2 {
+        font-size: 2.5rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    h3 {
+        font-size: 1.75rem;
+        color: #28a745;
+    }
+
+    p.lead {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        color: #555;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 1rem;
+        text-transform: uppercase;
+    }
+
+    .img-fluid {
+        transition: transform 0.3s ease;
+    }
+
+        .img-fluid:hover {
+            transform: scale(1.1);
+        }
+
+    .shadow-sm {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+</style>

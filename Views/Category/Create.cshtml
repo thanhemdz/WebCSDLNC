@@ -1,0 +1,14 @@
+@model BuiTanThanh_2280602928_W3.Models.ProductCategory
+@{
+    ViewData["Title"] = "Thêm loại nước";
+}
+<h2>Thêm loại nước</h2>
+<form asp-action="Create">
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Lưu</button>
+    <a asp-action="Index" class="btn btn-secondary mt-2">Quay lại</a>
+</form>

@@ -1,0 +1,11 @@
+@model BuiTanThanh_2280602928_W3.Models.Table
+@{
+    ViewData["Title"] = "Xóa bàn";
+}
+<h2>Xóa bàn</h2>
+<h4>Bạn có chắc chắn muốn xóa bàn <strong>@Model.Name</strong> không?</h4>
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Xóa</button>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</form>

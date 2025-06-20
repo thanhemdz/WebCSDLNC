@@ -1,0 +1,52 @@
+@model IEnumerable<BuiTanThanh_2280602928_W3.Models.Product>
+@{
+    ViewData["Title"] = "Quản lý Sản phẩm";
+}
+<h2>Quản lý Sản phẩm</h2>
+<p>
+    <a class="btn btn-primary" asp-action="Create">Thêm sản phẩm mới</a>
+</p>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Tên</th>
+            <th>Giá</th>
+            <th>Mô tả</th>
+            <th>Danh mục</th>
+            <th>Hình ảnh</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            int stt = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@stt</td>
+                    <td>@item.Name</td>
+                    <td>@item.Price.ToString("C")</td>
+                    <td>@item.Description</td>
+                    <td>@item.Category?.Name</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                        {
+                            <img src="@item.ImageUrl" alt="Ảnh" style="max-width:60px;max-height:40px;" />
+                        }
+                    </td>
+                    <td>
+                        <span class="badge @(item.Status == "active" ? "bg-success" : "bg-secondary")">@item.Status</span>
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Sửa</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Xóa</a>
+                    </td>
+                </tr>
+                stt++;
+            }
+        }
+    </tbody>
+</table>

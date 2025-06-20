@@ -1,0 +1,98 @@
+# ASP.NET Core .gitignore
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Rider
+.idea/
+*.sln.iml
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Publish results
+wwwroot/dist/
+
+# Entity Framework
+Migrations/*Designer.cs
+Migrations/*Snapshot.cs
+
+# Others
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# npm
+node_modules/
+
+# dotenv environment variables
+.env
+.env.*
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Test results
+TestResults/
+
+# Backup & local history
+*.bak
+*.orig
+*.tmp
+~$*
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# Local database
+*.mdf
+*.ldf
+*.ndf
+
+# Azure
+.publishsettings
+
+# NuGet
+*.nupkg
+# The packages folder can be ignored because of Package Restore
+**/packages/*
+!**/packages/build/
+!**/packages/repositories.config
+
+# DotCover
+*.dotCover
+
+# Coverage
+coverage/
+
+# SonarQube
+.sonar/
+
+# VS Code settings
+.history/
+
+# Windows image file caches
+*.jfif
+
+# Rider
+.idea/
+
+# End of file

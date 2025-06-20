@@ -1,0 +1,26 @@
+@model IEnumerable<BuiTanThanh_2280602928_W3.Models.ProductCategory>
+@{
+    ViewData["Title"] = "Quản lý loại nước";
+}
+<h2>Quản lý loại nước</h2>
+<a asp-action="Create" class="btn btn-primary mb-2">Thêm loại nước</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tên loại nước</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Name</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Sửa</a>
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Xóa</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

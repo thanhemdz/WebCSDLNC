@@ -1,0 +1,46 @@
+@model IEnumerable<BuiTanThanh_2280602928_W3.Models.Table>
+@{
+    ViewData["Title"] = "Quản lý Bàn";
+}
+<h2>Quản lý Bàn</h2>
+<p>
+    <a class="btn btn-primary" asp-action="Create">Thêm bàn mới</a>
+</p>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Tên bàn</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            int stt = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@stt</td>
+                    <td>@item.Name</td>
+                    <td>
+                        <form asp-action="ChangeStatus" method="post" style="display:inline">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <select name="status" class="form-select d-inline w-auto" onchange="this.form.submit()">
+                                <option value="available" selected="@(item.Status=="available" ? "selected" : null)">Còn trống</option>
+                                <option value="occupied" selected="@(item.Status=="occupied" ? "selected" : null)">Đang có khách</option>
+                                <option value="reserved" selected="@(item.Status=="reserved" ? "selected" : null)">Đã đặt trước</option>
+                            </select>
+                        </form>
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Sửa</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Xóa</a>
+                    </td>
+                </tr>
+                stt++;
+            }
+        }
+    </tbody>
+</table>

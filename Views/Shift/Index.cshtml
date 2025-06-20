@@ -1,0 +1,72 @@
+@model IEnumerable<BuiTanThanh_2280602928_W3.Models.Shift>
+@using BuiTanThanh_2280602928_W3.Models
+@{
+    ViewData["Title"] = "Lịch ca làm việc";
+    var startOfWeek = (DateTime)ViewBag.StartOfWeek;
+    var endOfWeek = (DateTime)ViewBag.EndOfWeek;
+    var allStaff = ViewBag.AllStaff as List<BuiTanThanh_2280602928_W3.Models.ApplicationUser>;
+    var days = Enumerable.Range(0, 7).Select(i => startOfWeek.AddDays(i)).ToList();
+    var shiftTypes = Enum.GetValues(typeof(ShiftType)).Cast<ShiftType>().ToList();
+}
+<h2 class="mb-4">Lịch ca làm việc tuần @startOfWeek.ToString("dd/MM/yyyy") - @endOfWeek.ToString("dd/MM/yyyy")</h2>
+<form asp-action="SaveSchedule" method="post">
+    <input type="hidden" name="startOfWeek" value="@startOfWeek.ToString("yyyy-MM-dd")" />
+<table class="table table-bordered text-center align-middle">
+    <thead>
+        <tr>
+            <th>Ca / Ngày</th>
+            @foreach (var day in days)
+            {
+                <th>@(day.ToString("dddd", new System.Globalization.CultureInfo("vi-VN")))<br />@day.ToString("dd/MM")</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var shiftType in shiftTypes)
+        {
+            var shiftLabel = "";
+            if (shiftType == ShiftType.Morning) { shiftLabel = "Sáng (7h-12h)"; }
+            else if (shiftType == ShiftType.Afternoon) { shiftLabel = "Trưa (12h-17h)"; }
+            else if (shiftType == ShiftType.Evening) { shiftLabel = "Tối (17h-22h)"; }
+            else { shiftLabel = shiftType.ToString(); }
+            <tr>
+                <td><b>@shiftLabel</b></td>
+                @foreach (var day in days)
+                {
+                    var shift = Model.FirstOrDefault(s => s.Date.Date == day.Date && s.ShiftType == shiftType);
+                    var cellClass = shift != null ? "bg-success-subtle" : "";
+                    <td class="@cellClass">
+                        <select name="@(string.Format("shift_{0}_{1}_staffId", day.ToString("yyyyMMdd"), shiftType))" class="form-select form-select-sm mb-1">
+                            <option value="">+ Chọn nhân viên</option>
+                            @foreach (var staff in allStaff ?? new List<BuiTanThanh_2280602928_W3.Models.ApplicationUser>())
+                            {
+                                bool isSelected = shift != null && shift.StaffId == staff.Id;
+                                <option value="@staff.Id" selected="@(isSelected ? "selected" : null)">@staff.Name (@staff.Email)</option>
+                                
+                            }
+                            
+                        </select>
+                        <input type="hidden" name="@(string.Format("shift_{0}_{1}_date", day.ToString("yyyyMMdd"), shiftType))" value="@day.ToString("yyyy-MM-dd")" />
+                        <input type="hidden" name="@(string.Format("shift_{0}_{1}_type", day.ToString("yyyyMMdd"), shiftType))" value="@shiftType" />
+                        @if (shift != null)
+                        {
+                            <div class="small text-success mt-1">Đã đăng ký</div>
+                        }
+                        else
+                        {
+                            <div class="small text-warning mt-1">Chưa đăng ký</div>
+                        }
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="mt-3 text-end">
+    <button type="submit" class="btn btn-success">Lưu lịch làm</button>
+</div>
+</form>
+<div class="mt-3">
+    <a class="btn btn-outline-secondary" asp-action="Index" asp-route-weekStart="@(startOfWeek.AddDays(-7).ToString("yyyy-MM-dd"))">&lt; Tuần trước</a>
+    <a class="btn btn-outline-secondary" asp-action="Index" asp-route-weekStart="@(startOfWeek.AddDays(7).ToString("yyyy-MM-dd"))">Tuần sau &gt;</a>
+</div>
