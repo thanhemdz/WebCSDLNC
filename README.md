@@ -37,36 +37,7 @@ dotnet ef database update
 ```
 
 > Nếu chưa cài EF CLI:  
-> `dotnet tool install --global dotnet-ef`
-
-### 5. Chạy project
-
-```bash
-dotnet run
-```
-
-- Mở trình duyệt và truy cập địa chỉ hiển thị trên terminal, ví dụ:  
-  `http://localhost:5000` hoặc `https://localhost:5001`
-
-### 6. Đăng nhập/Đăng ký
-
-- Đăng nhập bằng tài khoản admin hoặc tạo tài khoản mới để sử dụng chức năng quản lý lịch ca.
-
-## Một số lệnh hữu ích
-
-- Tạo migration mới:
-  ```bash
-  dotnet ef migrations add TenMigration
-  ```
-- Update database:
-  ```bash
-  dotnet ef database update
-  ```
-
-## Thông tin liên hệ
-
-- Tác giả: [Tên của bạn]
-- Email: [Email của bạn]
+> com
 
 ---
 
