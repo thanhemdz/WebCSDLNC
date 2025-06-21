@@ -81,6 +81,13 @@ namespace BuiTanThanh_2280602928_W3.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var category = await _context.ProductCategories.FindAsync(id);
+            // Kiểm tra nếu category có sản phẩm thì không cho xóa
+            bool hasProducts = await _context.Products.AnyAsync(p => p.CategoryId == id);
+            if (hasProducts)
+            {
+                TempData["ErrorMessage"] = "Không thể xóa loại danh mục này vì đang có sản phẩm thuộc loại này.";
+                return RedirectToAction(nameof(Index));
+            }
             _context.ProductCategories.Remove(category);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

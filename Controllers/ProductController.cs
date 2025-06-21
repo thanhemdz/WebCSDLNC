@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using BuiTanThanh_2280602928_W3.Data;
 using BuiTanThanh_2280602928_W3.Models;
+using BuiTanThanh_2280602928_W3.ViewModels;
 
 namespace BuiTanThanh_2280602928_W3.Controllers
 {
@@ -13,10 +14,38 @@ namespace BuiTanThanh_2280602928_W3.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? categoryId)
         {
-            var products = await _context.Products.Include(p => p.Category).ToListAsync();
-            return View(products);
+            var categories = await _context.ProductCategories.ToListAsync();
+            var products = await _context.Products.Include(p => p.Category).Where(p => p.Status == "active").ToListAsync();
+            var viewModel = new ProductIndexViewModel();
+            if (categoryId.HasValue)
+            {
+                var cat = categories.FirstOrDefault(c => c.Id == categoryId.Value);
+                if (cat != null)
+                {
+                    viewModel.Groups.Add(new ProductCategoryGroupViewModel
+                    {
+                        CategoryId = cat.Id,
+                        CategoryName = cat.Name,
+                        Products = products.Where(p => p.CategoryId == cat.Id).ToList()
+                    });
+                    viewModel.SelectedCategoryId = cat.Id;
+                }
+            }
+            else
+            {
+                foreach (var cat in categories)
+                {
+                    viewModel.Groups.Add(new ProductCategoryGroupViewModel
+                    {
+                        CategoryId = cat.Id,
+                        CategoryName = cat.Name,
+                        Products = products.Where(p => p.CategoryId == cat.Id).Take(4).ToList()
+                    });
+                }
+            }
+            return View(viewModel);
         }
 
         public IActionResult Create()
@@ -29,6 +58,17 @@ namespace BuiTanThanh_2280602928_W3.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Product product, IFormFile? ImageFile)
         {
+            // Kiểm tra trùng tên trong cùng danh mục
+            bool isDuplicate = _context.Products.Any(p => p.Name == product.Name && p.CategoryId == product.CategoryId);
+            if (isDuplicate)
+            {
+                ModelState.AddModelError("Name", "Tên sản phẩm đã tồn tại trong danh mục này.");
+            }
+            // Kiểm tra giá > 0
+            if (product.Price <= 0)
+            {
+                ModelState.AddModelError("Price", "Giá sản phẩm phải lớn hơn 0.");
+            }
             if (ModelState.IsValid)
             {
                 // Xử lý upload file ảnh nếu có
@@ -64,8 +104,21 @@ namespace BuiTanThanh_2280602928_W3.Controllers
         public async Task<IActionResult> Edit(int id, Product product, IFormFile? ImageFile)
         {
             if (id != product.Id) return NotFound();
+            // Kiểm tra trùng tên trong cùng danh mục (trừ chính nó)
+            bool isDuplicate = _context.Products.Any(p => p.Id != id && p.Name == product.Name && p.CategoryId == product.CategoryId);
+            if (isDuplicate)
+            {
+                ModelState.AddModelError("Name", "Tên sản phẩm đã tồn tại trong danh mục này.");
+            }
+            // Kiểm tra giá > 0
+            if (product.Price <= 0)
+            {
+                ModelState.AddModelError("Price", "Giá sản phẩm phải lớn hơn 0.");
+            }
             if (ModelState.IsValid)
             {
+                var oldProduct = await _context.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+                if (oldProduct == null) return NotFound();
                 // Xử lý upload file ảnh nếu có
                 if (ImageFile != null && ImageFile.Length > 0)
                 {
@@ -76,6 +129,11 @@ namespace BuiTanThanh_2280602928_W3.Controllers
                         await ImageFile.CopyToAsync(stream);
                     }
                     product.ImageUrl = "/images/" + fileName;
+                }
+                else
+                {
+                    // Nếu không upload ảnh mới, giữ nguyên ảnh cũ
+                    product.ImageUrl = oldProduct.ImageUrl;
                 }
                 _context.Update(product);
                 await _context.SaveChangesAsync();
@@ -100,8 +158,18 @@ namespace BuiTanThanh_2280602928_W3.Controllers
             var product = await _context.Products.FindAsync(id);
             if (product != null)
             {
-                _context.Products.Remove(product);
-                await _context.SaveChangesAsync();
+                bool hasOrder = _context.OrderItems.Any(oi => oi.ProductId == id);
+                if (hasOrder)
+                {
+                    TempData["DeleteMessage"] = "Sản phẩm đã từng bán, bạn không thể xóa. Nếu muốn ngừng kinh doanh, hãy chỉnh trạng thái ở phần Sửa.";
+                    return RedirectToAction(nameof(Delete), new { id });
+                }
+                else
+                {
+                    _context.Products.Remove(product);
+                    TempData["DeleteMessage"] = "Xóa sản phẩm thành công.";
+                    await _context.SaveChangesAsync();
+                }
             }
             return RedirectToAction(nameof(Index));
         }

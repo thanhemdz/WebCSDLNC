@@ -1,0 +1,56 @@
+@{
+    ViewData["Title"] = "Thống kê doanh thu";
+    var type = ViewBag.Type as string ?? "day";
+}
+<h2 class="mb-4">Thống kê doanh thu</h2>
+<form method="get" class="mb-3">
+    <label>Chọn loại thống kê: </label>
+    <select name="type" onchange="this.form.submit()" class="form-select d-inline w-auto ms-2">
+        <option value="day" selected="@(type=="day" ? "selected" : null)">Theo ngày</option>
+        <option value="month" selected="@(type=="month" ? "selected" : null)">Theo tháng</option>
+        <option value="year" selected="@(type=="year" ? "selected" : null)">Theo năm</option>
+    </select>
+</form>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>@(type=="day" ? "Ngày" : (type=="month" ? "Tháng" : "Năm"))</th>
+            <th>Tổng doanh thu</th>
+            <th>Chi tiết</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < ((IEnumerable<dynamic>)Model).Count(); i++)
+        {
+            var item = ((IEnumerable<dynamic>)Model).ElementAt(i);
+            <tr>
+                <td>@item.Period</td>
+                <td>@item.Total.ToString("N0") đ</td>
+                <td>
+                    <button class="btn btn-link btn-sm" type="button" onclick="loadOrderDetail('@item.Period','@type',@i)">Xem</button>
+                </td>
+            </tr>
+            <tr id="orderDetailRow_@i" style="display:none">
+                <td colspan="3" id="orderDetailCell_@i"></td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts {
+<script>
+    function loadOrderDetail(period, type, idx) {
+        var row = document.getElementById('orderDetailRow_' + idx);
+        var cell = document.getElementById('orderDetailCell_' + idx);
+        if (row.style.display === 'none') {
+            fetch(`/Report/OrderDetails?period=${encodeURIComponent(period)}&type=${encodeURIComponent(type)}`)
+                .then(res => res.text())
+                .then(html => {
+                    cell.innerHTML = html;
+                    row.style.display = '';
+                });
+        } else {
+            row.style.display = 'none';
+        }
+    }
+</script>
+}

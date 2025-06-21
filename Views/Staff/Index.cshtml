@@ -1,0 +1,36 @@
+@model IEnumerable<BuiTanThanh_2280602928_W3.Models.ApplicationUser>
+@{
+    ViewData["Title"] = "Quản lý nhân viên";
+}
+<h2 class="mb-4">Quản lý nhân viên</h2>
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+<a class="btn btn-primary mb-3" asp-action="Create">Thêm nhân viên</a>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Tên</th>
+            <th>Email</th>
+            <th>Số điện thoại</th>
+            <th>Ngày tạo</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var staff in Model)
+        {
+            <tr>
+                <td>@staff.Name</td>
+                <td>@staff.Email</td>
+                <td>@staff.PhoneNumber</td>
+                <td>@staff.CreatedAt.ToString("dd/MM/yyyy")</td>
+                <td>
+                    <a class="btn btn-warning btn-sm" asp-action="Edit" asp-route-id="@staff.Id">Sửa</a>
+                    <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@staff.Id">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

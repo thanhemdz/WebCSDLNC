@@ -1,0 +1,27 @@
+@model BuiTanThanh_2280602928_W3.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Sửa nhân viên";
+}
+<h2 class="mb-4">Sửa thông tin nhân viên</h2>
+<form asp-action="Edit" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <div class="mb-3">
+        <label for="name" class="form-label">Tên nhân viên</label>
+        <input type="text" class="form-control" id="name" name="name" value="@Model.Name" required />
+    </div>
+    <div class="mb-3">
+        <label for="phone" class="form-label">Số điện thoại</label>
+        <input type="text" class="form-control" id="phone" name="phone" value="@Model.PhoneNumber" />
+    </div>
+    <button type="submit" class="btn btn-primary">Lưu</button>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</form>
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="text-danger mt-2">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@error.ErrorMessage</div>
+        }
+    </div>
+}

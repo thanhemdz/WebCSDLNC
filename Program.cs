@@ -22,6 +22,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
    
 });
+builder.Services.AddSession();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -43,7 +44,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseSession();
 
 app.UseAuthorization();
 app.MapRazorPages();
