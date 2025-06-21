@@ -1,0 +1,72 @@
+@model BuiTanThanh_2280602928_W3.Models.CartViewModel
+@{
+    ViewData["Title"] = "Đặt hàng";
+    var tables = ViewBag.Tables as List<BuiTanThanh_2280602928_W3.Models.Table>;
+}
+<h2 class="mb-4">Xác nhận đặt hàng</h2>
+@if (Model.Items.Count == 0)
+{
+    <div class="alert alert-warning">Giỏ hàng trống.</div>
+}
+else
+{
+    <table class="table table-bordered align-middle text-center">
+        <thead>
+            <tr>
+                <th>Ảnh</th>
+                <th>Sản phẩm</th>
+                <th>Đơn giá</th>
+                <th>Số lượng</th>
+                <th>Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td><img src="@item.ImageUrl" alt="@item.ProductName" style="width:60px;height:60px;object-fit:cover;"></td>
+                    <td>@item.ProductName</td>
+                    <td>@item.UnitPrice.ToString("N0") đ</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Total.ToString("N0") đ</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="text-end mb-3">
+        <b>Tổng cộng: @Model.GrandTotal.ToString("N0") đ</b>
+    </div>
+    <form asp-action="PlaceOrder" method="post">
+        <div class="mb-3">
+            <label><input type="radio" name="orderType" value="table" checked onchange="toggleOrderType()"> Tại quán (chọn bàn)</label>
+            <label class="ms-3"><input type="radio" name="orderType" value="delivery" onchange="toggleOrderType()"> Giao tận nơi</label>
+        </div>
+        <div id="tableSelect" class="mb-3">
+            <label for="tableId">Chọn bàn:</label>
+            <select name="tableId" id="tableId" class="form-select w-auto d-inline">
+                <option value="">-- Chọn bàn --</option>
+                @if (tables != null)
+                {
+                    foreach (var t in tables)
+                    {
+                        <option value="@t.Id">@t.Name</option>
+                    }
+                }
+            </select>
+        </div>
+        <div id="addressInput" class="mb-3" style="display:none;">
+            <label for="address">Địa chỉ giao hàng:</label>
+            <input type="text" name="address" id="address" class="form-control w-50 d-inline" />
+        </div>
+        <button type="submit" class="btn btn-success">Xác nhận đặt hàng</button>
+        <a asp-action="Index" class="btn btn-secondary">Quay lại giỏ hàng</a>
+    </form>
+    <script>
+        function toggleOrderType() {
+            var type = document.querySelector('input[name="orderType"]:checked').value;
+            document.getElementById('tableSelect').style.display = type === 'table' ? '' : 'none';
+            document.getElementById('addressInput').style.display = type === 'delivery' ? '' : 'none';
+        }
+        document.addEventListener('DOMContentLoaded', toggleOrderType);
+    </script>
+}

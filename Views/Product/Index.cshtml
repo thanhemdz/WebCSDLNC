@@ -1,39 +1,59 @@
-﻿@model IEnumerable<BuiTanThanh_2280602928_W3.Models.Product>
+﻿@model BuiTanThanh_2280602928_W3.ViewModels.ProductIndexViewModel
 @{
     ViewData["Title"] = "Product List";
 }
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" />
 <div class="container py-5">
     <h2 class="text-center mb-4">Our Products</h2>
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-        @foreach (var product in Model)
-        {
-            <div class="col">
-                <div class="card h-100 shadow-sm">
-                    <img src="@(string.IsNullOrEmpty(product.ImageUrl) ? "https://dummyimage.com/450x300/dee2e6/6c757d.jpg" : product.ImageUrl)"
-                         class="card-img-top" alt="@product.Name" />
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">@product.Name</h5>
-                        <p class="card-text text-truncate" title="@product.Description">@product.Description</p>
-                        <div class="mb-2">
-                            <span class="badge bg-info">@product.Category?.Name</span>
-                        </div>
-                        <div class="mt-auto d-flex justify-content-between align-items-center">
-                            <span class="h5 mb-0 text-success">@product.Price.ToString("C")</span>
-                            <div>
-                                <a asp-action="Display" asp-route-id="@product.Id" class="btn btn-outline-info btn-sm me-1" title="Xem chi tiết">
-                                    <i class="bi bi-eye"></i> Xem
-                                </a>
-                                <a asp-action="AddToCart" asp-route-id="@product.Id" class="btn btn-outline-primary btn-sm" title="Thêm vào giỏ hàng">
-                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ
-                                </a>
+    @if (TempData["DeleteMessage"] != null)
+    {
+        <div class="alert alert-info">@TempData["DeleteMessage"]</div>
+    }
+    @foreach (var group in Model.Groups)
+    {
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h4 class="mb-0">@group.CategoryName</h4>
+                @if (group.Products.Count >= 4 && !Model.SelectedCategoryId.HasValue)
+                {
+                    <a asp-action="Index" asp-route-categoryId="@group.CategoryId" class="btn btn-link">Xem tất cả</a>
+                }
+                @if (Model.SelectedCategoryId.HasValue)
+                {
+                    <a asp-action="Index" class="btn btn-link">Quay lại</a>
+                }
+            </div>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                @foreach (var product in group.Products)
+                {
+                    <div class="col">
+                        <div class="card h-100 shadow-sm">
+                            <img src="@(string.IsNullOrEmpty(product.ImageUrl) ? "https://dummyimage.com/450x300/dee2e6/6c757d.jpg" : product.ImageUrl)"
+                                 class="card-img-top" alt="@product.Name" />
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">@product.Name</h5>
+                                <p class="card-text text-truncate" title="@product.Description">@product.Description</p>
+                                <div class="mb-2">
+                                    <span class="badge bg-info">@product.Category?.Name</span>
+                                </div>
+                                <div class="mt-auto d-flex justify-content-between align-items-end">
+                                    <span class="h5 mb-0 text-success">@product.Price.ToString("N0")</span>
+                                    <div class="d-flex flex-column ms-2" style="min-width:120px;">
+                                        <a asp-action="Display" asp-route-id="@product.Id" class="btn btn-outline-primary btn-sm mb-2 w-100" title="Xem chi tiết">
+                                            <i class="bi bi-eye"></i> Xem
+                                        </a>
+                                        <a asp-controller="Cart" asp-action="AddToCart" asp-route-productId="@product.Id" class="btn btn-outline-primary btn-sm w-100" title="Thêm vào giỏ hàng">
+                                            <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                }
             </div>
-        }
-    </div>
+        </div>
+    }
 </div>
 <style>
     .card-img-top {

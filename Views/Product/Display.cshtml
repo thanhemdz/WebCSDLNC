@@ -1,62 +1,81 @@
 ﻿@model BuiTanThanh_2280602928_W3.Models.Product
-
-@* Thêm một số classes của Bootstrap để tạo layout đẹp hơn *@
+@using System
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
 <div class="container py-5">
     <div class="row">
-        <div class="col-md-6">
-            @* Hiển thị ảnh sản phẩm hoặc ảnh mặc định *@
-            <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "https://dummyimage.com/450x300/dee2e6/6c757d.jpg" : Model.ImageUrl)" alt="Product Image" class="img-fluid rounded shadow-sm" />
+        <!-- Product Images -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "https://dummyimage.com/450x300/dee2e6/6c757d.jpg" : Model.ImageUrl)" class="card-img-top" alt="Product Image">
+            </div>
         </div>
+        <!-- Product Details -->
         <div class="col-md-6">
-            <h2 class="text-primary">@Model.Name</h2>
-            <h5 class="mb-2">Category: <span class="badge bg-info">@Model.Category?.Name</span></h5>
-            <h3 class="text-success">@string.Format("{0:C}", Model.Price)</h3>
-            <p class="lead">@Model.Description</p>
+            <h1 class="h2 mb-3">@Model.Name</h1>
+            <div class="mb-3">
+                <span class="h4 me-2 text-success">@Model.Price.ToString("N0")₫</span>
+                @* Nếu có logic giảm giá thì thêm ở đây *@
+            </div>
+            <div class="mb-3">
+                <span class="badge bg-info">@Model.Category?.Name</span>
+            </div>
+            <div class="mb-3">
+                <div class="d-flex align-items-center">
+                    <div class="text-warning me-2">
+                        @{
+                            var rand = new Random(Model.Id + DateTime.Now.Day); // random ổn định theo Id
+                            int stars = rand.Next(4, 6); // 4 hoặc 5 sao
+                        }
+                        @for (int i = 0; i < stars; i++)
+                        {
+                            <i class="fas fa-star"></i>
+                        }
+                        @if (stars == 4)
+                        {
+                            <i class="fas fa-star-half-alt"></i>
+                        }
+                    </div>
+                    <span class="text-muted">(@(stars == 5 ? 128 : 87) reviews)</span>
+                </div>
+            </div>
+            <p class="mb-4">@Model.Description</p>
             <p>Status: <span class="badge @(Model.Status == "active" ? "bg-success" : "bg-secondary")">@Model.Status</span></p>
-            <a href="@Url.Action("Index", "Product")" class="btn btn-secondary btn-lg">Back to List</a>
+            <div class="d-grid gap-2 mb-3">
+                <form asp-controller="Cart" asp-action="AddToCart" method="get" class="d-flex flex-column flex-sm-row align-items-center gap-2">
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <label class="me-2 mb-0">Số lượng:</label>
+                    <input type="number" name="quantity" value="1" min="1" class="form-control w-auto mb-2 mb-sm-0" style="max-width:90px;" />
+                    <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                        <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                    </button>
+                </form>
+                <button class="btn btn-outline-secondary btn-lg" type="button">
+                    <i class="far fa-heart me-2"></i>Yêu thích
+                </button>
+            </div>
+            <a href="@Url.Action("Index", "Product")" class="btn btn-secondary">Quay lại danh sách</a>
         </div>
     </div>
 </div>
-
-@* Thêm một số style tùy chỉnh *@
 <style>
-    .container {
-        max-width: 1200px;
+    .card-img-top {
+        height: 350px;
+        object-fit: auto;
     }
-
-    h2 {
-        font-size: 2.5rem;
+    .h2, h1 {
+        font-size: 2.2rem;
         font-weight: 600;
         color: #333;
-        margin-bottom: 20px;
     }
-
-    h3 {
-        font-size: 1.75rem;
-        color: #28a745;
+    .h4 {
+        font-size: 1.5rem;
     }
-
-    p.lead {
+    .btn-lg {
+        padding: 12px 24px;
+        font-size: 1.1rem;
+    }
+    .text-warning i {
+        color: #ffc107;
         font-size: 1.2rem;
-        line-height: 1.6;
-        color: #555;
-    }
-
-    .btn {
-        padding: 10px 20px;
-        font-size: 1rem;
-        text-transform: uppercase;
-    }
-
-    .img-fluid {
-        transition: transform 0.3s ease;
-    }
-
-        .img-fluid:hover {
-            transform: scale(1.1);
-        }
-
-    .shadow-sm {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 </style>

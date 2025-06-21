@@ -1,0 +1,11 @@
+@model BuiTanThanh_2280602928_W3.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Xóa nhân viên";
+}
+<h2 class="mb-4">Xóa nhân viên</h2>
+<div class="alert alert-warning">Bạn có chắc chắn muốn xóa nhân viên <b>@Model.Name</b> không?</div>
+<form asp-action="Delete" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button type="submit" class="btn btn-danger">Xóa</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>
